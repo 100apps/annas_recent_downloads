@@ -6,6 +6,22 @@ from datetime import datetime
 import os
 
 
+# 配置日志记录
+def setup_logging():
+    """配置日志记录器"""
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    log_file = f'crawler_{current_date}.log'
+    
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler(log_file, encoding='utf-8'),
+            logging.StreamHandler()  # 同时输出到控制台
+        ]
+    )
+
+
 def get_recent_downloads(proxy_host="192.168.100.2", proxy_port="10081"):
     """
     获取最近下载列表
@@ -33,6 +49,9 @@ def get_recent_downloads(proxy_host="192.168.100.2", proxy_port="10081"):
 
 
 if __name__ == "__main__":
+    # 初始化日志配置
+    setup_logging()
+    
     # 设置进程池大小
     PROCESS_COUNT = 3
     # 每批次的请求数量
@@ -53,7 +72,7 @@ if __name__ == "__main__":
                     i += 1
                     result = future.result()
                     all_results.append(result)
-                    print(f"完成第 {i} 次请求")
+                    logging.info(f"完成第 {i} 次请求")
                 except Exception as e:
                     logging.error(f"第 {i} 次请求失败: {str(e)}")
         
@@ -63,4 +82,4 @@ if __name__ == "__main__":
         with open(output_file, 'a', encoding='utf-8') as f:
             f.write(''.join(all_results))
         
-        print(f"所有结果已追加到 {output_file}")
+        logging.info(f"所有结果已追加到 {output_file}")
