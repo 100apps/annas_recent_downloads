@@ -27,8 +27,8 @@ def get_recent_downloads(proxy_host="192.168.100.2", proxy_port="10081"):
         'https': f'http://{proxy_host}:{proxy_port}'
     }
     
-    # 使用代理发送请求
-    response = requests.get(url, proxies=proxies)
+    # 使用代理发送请求,设置超时时间为5秒
+    response = requests.get(url, proxies=proxies, timeout=5)
     return f"{timestamp}\t{response.text}\n"
 
 
